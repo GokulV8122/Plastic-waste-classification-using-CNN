@@ -3,56 +3,89 @@ import numpy as np
 import cv2
 import gdown
 import os
-import h5py
 from tensorflow.keras.models import load_model
 from PIL import Image
+
+# App title and design
+st.set_page_config(page_title="Plastic Waste Classifier", page_icon="🌟", layout="centered")
+st.markdown("""
+    <style>
+        .title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #FF5733;
+            text-align: center;
+        }
+        .subtext {
+            font-size: 18px;
+            color: #666;
+            text-align: center;
+        }
+        .footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 16px;
+            color: #888;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Sidebar info
+st.sidebar.title("About This App")
+st.sidebar.info("This app classifies plastic waste as **Recyclable** or **Organic** using a CNN model.")
+st.sidebar.markdown("**Created by: Gokul 🚀**")
+st.sidebar.markdown("---")
 
 # Google Drive file ID of model.h5
 file_id = "1r8JloPkXvxPzkr1dz6Ow7RznSiwZkM7o"
 model_path = "model.h5"
 
-# Function to verify if model file is valid
-def is_valid_h5(file_path):
-    try:
-        with h5py.File(file_path, 'r') as f:
-            return True
-    except:
-        return False
-
-# Download model if not present or invalid
-if not os.path.exists(model_path) or not is_valid_h5(model_path):
-    st.write("Downloading model... Please wait.")
+# Download model if not present
+if not os.path.exists(model_path):
     url = f"https://drive.google.com/uc?id={file_id}"
+    st.sidebar.write("Downloading model... Please wait.")
     gdown.download(url, model_path, quiet=False)
 
 # Load the trained model
-if is_valid_h5(model_path):
-    model = load_model(model_path)
-else:
-    st.error("Failed to download or load model. Please check the file.")
+model = load_model(model_path)
 
 # Define the prediction function
 def predict_fun(img):
     img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
     img = cv2.resize(img, (224, 224))
-    img = np.reshape(img, [-1, 224, 224, 3]) / 255.0
+    img = np.reshape(img, [-1, 224, 224, 3])
+    img = img / 255.0
     prediction = model.predict(img)
     result = np.argmax(prediction)
     return result, prediction
 
-# Streamlit app UI
-st.title("♻️ Waste Classification")
-st.write("Upload an image to classify it as **Recyclable** or **Organic waste**.")
+# Streamlit app
+st.markdown("<p class='title'>Plastic Waste Classification</p>", unsafe_allow_html=True)
+st.markdown("<p class='subtext'>Upload an image to classify it as Recyclable or Organic waste.</p>", unsafe_allow_html=True)
 
-uploaded_file = st.file_uploader("📤 Choose an image...", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
-    st.image(image, caption="📌 Uploaded Image", use_column_width=True)
+    st.image(image, caption='Uploaded Image.', use_column_width=True)
+    st.write("\n")
+    st.write("Classifying...")
     
-    st.write("🔄 **Classifying... Please wait.**")
+    progress = st.progress(0)
+    for percent in range(100):
+        progress.progress(percent + 1)
+    
     result, prediction = predict_fun(image)
+    progress.empty()
+    
+    if result == 0:
+        st.success("♻️ The image is classified as **Recyclable**!")
+    elif result == 1:
+        st.warning("🍂 The image is classified as **Organic Waste**!")
+    
+    st.write("**Prediction Probabilities:**", prediction)
 
-    labels = ["♻️ Recyclable", "🌱 Organic Waste"]
-    st.success(f"**Prediction:** {labels[result]}")
-    st.write("📊 **Prediction probabilities:**", prediction)
+# Footer
+st.markdown("<p class='footer'>Made with ❤️ by Gokul</p>", unsafe_allow_html=True)
