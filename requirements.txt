@@ -4,3 +4,5 @@ matplotlib
 numpy
 pandas
 tqdm
+streamlit
+gdown
