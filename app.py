@@ -7,7 +7,7 @@ from tensorflow.keras.models import load_model
 from PIL import Image
 
 # Google Drive file ID of model.h5
-file_id = "YOUR_FILE_ID"
+file_id = "1r8JloPkXvxPzkr1dz6Ow7RznSiwZkM7o"
 model_path = "model.h5"
 
 # Download model if not present
