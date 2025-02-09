@@ -7,17 +7,17 @@ from tensorflow.keras.models import load_model
 from PIL import Image
 
 # App title and design
-st.set_page_config(page_title="Plastic Waste Classifier", page_icon="🌟", layout="centered")
+st.set_page_config(page_title="Waste Classifier", page_icon="🌟", layout="centered")
 st.markdown("""
     <style>
         .title {
-            font-size: 36px;
+            font-size: 80px;
             font-weight: bold;
-            color: #FF5733;
+            color:rgb(12, 133, 144);
             text-align: center;
         }
         .subtext {
-            font-size: 18px;
+            font-size: 24px;
             color: #666;
             text-align: center;
         }
@@ -34,7 +34,7 @@ st.markdown("""
 
 # Sidebar info
 st.sidebar.title("About This App")
-st.sidebar.info("This app classifies plastic waste as **Recyclable** or **Organic** using a CNN model.")
+st.sidebar.info("This app classifies Waste as **Recyclable** or **Organic** using a CNN model.")
 st.sidebar.markdown("**Created by: Gokul 🚀**")
 st.sidebar.markdown("---")
 
@@ -62,7 +62,7 @@ def predict_fun(img):
     return result, prediction
 
 # Streamlit app
-st.markdown("<p class='title'>Plastic Waste Classification</p>", unsafe_allow_html=True)
+st.markdown("<p class='title'>♻️Waste Classification🍂</p>", unsafe_allow_html=True)
 st.markdown("<p class='subtext'>Upload an image to classify it as Recyclable or Organic waste.</p>", unsafe_allow_html=True)
 
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
@@ -81,9 +81,9 @@ if uploaded_file is not None:
     progress.empty()
     
     if result == 0:
-        st.success("♻️ The image is classified as **Recyclable**!")
+        st.success("♻️ **Recyclable Waste**!")
     elif result == 1:
-        st.warning("🍂 The image is classified as **Organic Waste**!")
+        st.warning("🍂 **Organic Waste**!")
     
     st.write("**Prediction Probabilities:**", prediction)
 
