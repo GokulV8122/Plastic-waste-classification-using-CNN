@@ -1,11 +1,23 @@
 import streamlit as st
 import numpy as np
 import cv2
+import gdown
+import os
 from tensorflow.keras.models import load_model
 from PIL import Image
 
+# Google Drive file ID of model.h5
+file_id = "YOUR_FILE_ID"
+model_path = "model.h5"
+
+# Download model if not present
+if not os.path.exists(model_path):
+    url = f"https://drive.google.com/file/d/1r8JloPkXvxPzkr1dz6Ow7RznSiwZkM7o/view?usp=sharing"
+    st.write("Downloading model... Please wait.")
+    gdown.download(url, model_path, quiet=False)
+
 # Load the trained model
-model = load_model('model.h5')
+model = load_model(model_path)
 
 # Define the prediction function
 def predict_fun(img):
